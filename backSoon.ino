@@ -48,15 +48,19 @@ char payload[1];
 uint16_t nSourcePort = 1234;
 uint16_t nDestinationPort = 5678;
 
-#define SEND_DATA_SIZE (10000)
-void loop() {
-  uint16_t time = millis();
+#define SEND_DATA_SIZE (1000)
+
+void speedTest()
+{
+  uint16_t startTime = millis();
   for (uint16_t i = 0; i < SEND_DATA_SIZE; i++) {
     ether.packetLoop(ether.packetReceive());
     ether.sendUdp(payload, PAYLOAD_LEN, nSourcePort, ipDestinationAddress, nDestinationPort);
-    Serial.println(i);
+//    Serial.print(i);
+//    Serial.print(":");
+//    Serial.println(millis());
   }
-  uint16_t elapsed = millis() - time;
+  uint16_t elapsed = millis() - startTime;
   Serial.print("send ");
   Serial.print(SEND_DATA_SIZE);
   Serial.println(" KB");
@@ -64,8 +68,12 @@ void loop() {
   Serial.print(elapsed);
   Serial.println(" ms");
 
-  float bps = (float)SEND_DATA_SIZE * 8 / (elapsed / SEND_DATA_SIZE);
+  float bps = (float)SEND_DATA_SIZE * 8 / ((float)elapsed / 1000);
   Serial.print(bps);
   Serial.println(" kbps");
+}
+
+void loop() {
+  speedTest();
   while (1);
 }

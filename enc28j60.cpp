@@ -243,17 +243,24 @@ void ENC28J60::initSPI () {
     digitalWrite(SCK, LOW);
 
     SPCR = bit(SPE) | bit(MSTR); // 8 MHz @ 16
+
+//    SPCR = bit(SPE) | bit(MSTR) | bit(SPR0); // 2 MHz @ 16
+
+//    SPCR = bit(SPE) | bit(MSTR) | bit(SPR1); // 0.5 MHz @ 16
+
+//    SPCR = bit(SPE) | bit(MSTR) | bit(SPR0) | bit(SPR1); // 0.25 MHz @ 16
+
     bitSet(SPSR, SPI2X);
 }
 
 static void enableChip () {
-    cli();
+//    cli();
     digitalWrite(selectPin, LOW);
 }
 
 static void disableChip () {
     digitalWrite(selectPin, HIGH);
-    sei();
+//    sei();
 }
 
 static void xferSPI (byte data) {
