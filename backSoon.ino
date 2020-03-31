@@ -5,40 +5,25 @@
 
 #include <EtherCard.h>
 
-#define STATIC 1  // set to 1 to disable DHCP (adjust myip/gwip values below)
+#define STATIC 0  // set to 1 to disable DHCP (adjust myip/gwip values below)
+
+#define PAYLOAD_LEN (1024)
 
 #if STATIC
 // ethernet interface ip address
-static byte myip[] = { 192,168,11,3 };
+static byte myip[] = { 192, 168, 11, 3 };
 // gateway ip address
-static byte gwip[] = { 192,168,11,1 };
+static byte gwip[] = { 192, 168, 11, 1 };
 #endif
 
 // ethernet mac address - must be unique on your network
-static byte mymac[] = { 0x74,0x69,0x69,0x2D,0x30,0x31 };
+static byte mymac[] = { 0x74, 0x69, 0x69, 0x2D, 0x30, 0x31 };
 
-byte Ethernet::buffer[500]; // tcp/ip send and receive buffer
+byte Ethernet::buffer[PAYLOAD_LEN + 100]; // tcp/ip send and receive buffer
 
-const char page[] PROGMEM =
-"HTTP/1.0 503 Service Unavailable\r\n"
-"Content-Type: text/html\r\n"
-"Retry-After: 600\r\n"
-"\r\n"
-"<html>"
-  "<head><title>"
-    "Service Temporarily Unavailable"
-  "</title></head>"
-  "<body>"
-    "<h3>This service is currently unavailable</h3>"
-    "<p><em>"
-      "The main server is currently off-line.<br />"
-      "Please try again later."
-    "</em></p>"
-  "</body>"
-"</html>"
-;
+uint8_t ipDestinationAddress[IP_LEN];
 
-void setup(){
+void setup() {
   Serial.begin(57600);
   Serial.println("\n[backSoon]");
 
@@ -55,12 +40,32 @@ void setup(){
   ether.printIp("IP:  ", ether.myip);
   ether.printIp("GW:  ", ether.gwip);
   ether.printIp("DNS: ", ether.dnsip);
+
+  ether.parseIp(ipDestinationAddress, "192.168.11.2");
 }
 
-void loop(){
-  // wait for an incoming TCP packet, but ignore its contents
-  if (ether.packetLoop(ether.packetReceive())) {
-    memcpy_P(ether.tcpOffset(), page, sizeof page);
-    ether.httpServerReply(sizeof page - 1);
+char payload[1];
+uint16_t nSourcePort = 1234;
+uint16_t nDestinationPort = 5678;
+
+#define SEND_DATA_SIZE (10000)
+void loop() {
+  uint16_t time = millis();
+  for (uint16_t i = 0; i < SEND_DATA_SIZE; i++) {
+    ether.packetLoop(ether.packetReceive());
+    ether.sendUdp(payload, PAYLOAD_LEN, nSourcePort, ipDestinationAddress, nDestinationPort);
+    Serial.println(i);
   }
+  uint16_t elapsed = millis() - time;
+  Serial.print("send ");
+  Serial.print(SEND_DATA_SIZE);
+  Serial.println(" KB");
+
+  Serial.print(elapsed);
+  Serial.println(" ms");
+
+  float bps = (float)SEND_DATA_SIZE * 8 / (elapsed / SEND_DATA_SIZE);
+  Serial.print(bps);
+  Serial.println(" kbps");
+  while (1);
 }
