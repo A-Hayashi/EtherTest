@@ -3,7 +3,7 @@
 //
 // License: GPLv2
 
-#include <EtherCard.h>
+#include "EtherCard.h"
 
 #define STATIC 0  // set to 1 to disable DHCP (adjust myip/gwip values below)
 
