@@ -3,7 +3,9 @@
 
 #include "Platform_Types.h"
 
+#ifndef NULL
 #define	NULL	0
+#endif
 
 #define MIN(_x,_y) (((_x) < (_y)) ? (_x) : (_y))
 #define MAX(_x,_y) (((_x) > (_y)) ? (_x) : (_y))

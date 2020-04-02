@@ -1,7 +1,9 @@
 #ifndef PLATFORM_TYPES_H
 #define PLATFORM_TYPES_H
 
+#ifndef _Bool
 #define _Bool unsigned char
+#endif
 
 #define FALSE		(boolean)false
 #define TRUE		(boolean)true

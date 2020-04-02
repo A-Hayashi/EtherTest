@@ -53,12 +53,12 @@ typedef struct Xcp_FifoType {
 
 static inline void Xcp_Fifo_Lock(Xcp_FifoType* q)
 {
-
+	q->lock = NULL;
 }
 
 static inline void Xcp_Fifo_Unlock(Xcp_FifoType* q)
 {
-
+	q->lock = NULL;
 }
 
 static inline Xcp_BufferType* Xcp_Fifo_Get(Xcp_FifoType* q)

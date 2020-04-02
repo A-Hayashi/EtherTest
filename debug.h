@@ -14,6 +14,6 @@
 
 #define DEBUG_HIGH 1
 
-void DEBUG(uint8 level, char *fmt, ...);
+void DEBUG(uint8 level, const char *fmt, ...);
 
 #endif /* DEBUG_H_ */

@@ -6,7 +6,7 @@
  */
 #include "debug.h"
 
-void DEBUG(uint8 level, char *fmt, ...)
+void DEBUG(uint8 level, const char *fmt, ...)
 {
   char buf[128];
   va_list args;
