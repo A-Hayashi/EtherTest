@@ -4,6 +4,7 @@
 // License: GPLv2
 
 #include "EtherCard/EtherCard.h"
+#include "Xcp.h"
 
 #define STATIC 0  // set to 1 to disable DHCP (adjust myip/gwip values below)
 
@@ -73,7 +74,11 @@ void speedTest()
   Serial.println(" kbps");
 }
 
+
 void loop() {
+	uint8 test;
+
+	Xcp_SoAdIfRxIndication(&test, 5);
   speedTest();
   while (1);
 }
