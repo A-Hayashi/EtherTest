@@ -3,7 +3,7 @@
 //
 // License: GPLv2
 
-#include "EtherCard.h"
+#include "EtherCard/EtherCard.h"
 
 #define STATIC 0  // set to 1 to disable DHCP (adjust myip/gwip values below)
 
@@ -56,9 +56,9 @@ void speedTest()
   for (uint16_t i = 0; i < SEND_DATA_SIZE; i++) {
     ether.packetLoop(ether.packetReceive());
     ether.sendUdp(payload, PAYLOAD_LEN, nSourcePort, ipDestinationAddress, nDestinationPort);
-//    Serial.print(i);
-//    Serial.print(":");
-//    Serial.println(millis());
+    Serial.print(i);
+    Serial.print(":");
+    Serial.println(millis());
   }
   uint16_t elapsed = millis() - startTime;
   Serial.print("send ");
