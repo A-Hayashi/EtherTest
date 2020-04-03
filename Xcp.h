@@ -19,15 +19,15 @@
 #define XCP_H_
 
 #include "Std_Types.h"
-#include "debug.h"
-#include "Xcp_cfg.h"
 #include "Xcp_ByteStream.h"
+#include "debug.h"
 
 
 #define XCP_ELEMENT_SIZE 1
 
-void Xcp_SoAdIfRxIndication(uint8 *buff, uint16 len);
-Std_ReturnType Xcp_Transmit(const void* data, int len);
+
+void Xcp_SoAdIfRxIndication(uint8 *data, uint16 len);
+Std_ReturnType SoAdIf_Transmit(uint8* data, uint16 len);
 
 
 #endif /* XCP_H_ */

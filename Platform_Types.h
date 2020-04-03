@@ -1,6 +1,8 @@
 #ifndef PLATFORM_TYPES_H
 #define PLATFORM_TYPES_H
 
+#include "Arduino.h"
+
 #ifndef _Bool
 #define _Bool unsigned char
 #endif

@@ -1,9 +1,4 @@
-#include "Arduino.h"
-#include "Std_Types.h"
-#include "Xcp.h"
-#include "Xcp_Cfg.h"
 #include "Xcp_Internal.h"
-#include "Xcp_ByteStream.h"
 
 Xcp_BufferType Xcp_Buffers[XCP_MAX_RXTX_QUEUE];
 Xcp_FifoType   Xcp_FifoFree;
@@ -21,7 +16,7 @@ void Xcp_Init(void)
     Xcp_Inited = 1;
 }
 
-void Xcp_RxIndication(const void* data, int len)
+void Xcp_RxIndication(uint8* data, uint16 len)
 {
     if(len > XCP_MAX_DTO) {
         DEBUG(DEBUG_HIGH, "Xcp_RxIndication - length %d too long\n", len);
@@ -48,7 +43,7 @@ static Std_ReturnType Xcp_CmdShortUpload(uint8 pid, void* data, int len)
         RETURN_ERROR(XCP_ERR_CMD_SYNTAX, "Xcp_CmdShortUpload - Too long data requested\n");
     }
 
-//    Xcp_MtaInit(&Xcp_Mta, addr, ext);
+    Xcp_MtaInit(&Xcp_Mta, addr, ext);
     if(Xcp_Mta.read == NULL) {
         RETURN_ERROR(XCP_ERR_CMD_SYNTAX, "Xcp_CmdShortUpload - invalid memory address\n");
     }
@@ -57,20 +52,10 @@ static Std_ReturnType Xcp_CmdShortUpload(uint8 pid, void* data, int len)
         SET_UINT8 (e->data, 0, XCP_PID_RES);
         if(XCP_ELEMENT_SIZE > 1)
             memset(e->data+1, 0, XCP_ELEMENT_SIZE - 1);
-//        Xcp_MtaRead(&Xcp_Mta, e->data + XCP_ELEMENT_SIZE, count);
+        Xcp_MtaRead(&Xcp_Mta, e->data + XCP_ELEMENT_SIZE, count);
         e->len = count + XCP_ELEMENT_SIZE;
     }
     return E_OK;
-}
-
-static Std_ReturnType Xcp_CmdSetMTA(uint8 pid, void* data, int len)
-{
-    int ext = GET_UINT8 (data, 2);
-    int ptr = GET_UINT32(data, 3);
-    DEBUG(DEBUG_HIGH, "Received set_mta 0x%x, %d\n", ptr, ext);
-
-//    Xcp_MtaInit(&Xcp_Mta, ptr, ext);
-    RETURN_SUCCESS();
 }
 
 /**************************************************************************/

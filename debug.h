@@ -8,7 +8,6 @@
 #ifndef DEBUG_H_
 #define DEBUG_H_
 
-#include "Arduino.h"
 #include "Std_Types.h"
 #include <stdarg.h>
 

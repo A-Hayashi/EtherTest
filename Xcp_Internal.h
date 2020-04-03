@@ -4,7 +4,6 @@
 #include "Xcp.h"
 #include "Xcp_Cfg.h"
 
-
 typedef enum {
     XCP_PID_RES  = 0xFF,
     XCP_PID_ERR  = 0xFE,
@@ -145,8 +144,8 @@ typedef struct Xcp_MtaType {
 
 
 
-extern void Xcp_TxError(Xcp_ErrorType code);
-extern void Xcp_TxSuccess();
+void Xcp_TxError(Xcp_ErrorType code);
+void Xcp_TxSuccess();
 
 
 #define RETURN_ERROR(code, ...) do {      \
@@ -160,5 +159,16 @@ extern void Xcp_TxSuccess();
         return E_OK;          \
     } while(0)
 
+
+/* MTA HELPER FUNCTIONS */
+void                Xcp_MtaInit (Xcp_MtaType* mta, intptr_t address, uint8 extension);                       /**< Open a new mta reader/writer */
+static inline void  Xcp_MtaFlush(Xcp_MtaType* mta)                       { if(mta->flush) mta->flush(mta); } /**< Will flush any remaining data to write */
+static inline void  Xcp_MtaWrite(Xcp_MtaType* mta, uint8* data, int len) { mta->write(mta, data, len); }
+static inline void  Xcp_MtaRead (Xcp_MtaType* mta, uint8* data, int len) { mta->read(mta, data, len);}
+static inline uint8 Xcp_MtaGet  (Xcp_MtaType* mta)                       { return mta->get(mta); }
+static inline void  Xcp_MtaPut  (Xcp_MtaType* mta, uint8 val)            { mta->put(mta, val);}
+
+void Xcp_RxIndication(uint8* data, uint16 len);
+Std_ReturnType Xcp_Transmit(uint8* data, uint16 len);
 
 #endif /* XCP_INTERNAL_H_ */

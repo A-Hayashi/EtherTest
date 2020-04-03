@@ -23,6 +23,8 @@ static byte mymac[] = { 0x74, 0x69, 0x69, 0x2D, 0x30, 0x31 };
 byte Ethernet::buffer[PAYLOAD_LEN + 100]; // tcp/ip send and receive buffer
 
 uint8_t ipDestinationAddress[IP_LEN];
+uint16_t nSourcePort = 1234;
+uint16_t nDestinationPort = 5678;
 
 void setup() {
   Serial.begin(57600);
@@ -43,20 +45,20 @@ void setup() {
   ether.printIp("DNS: ", ether.dnsip);
 
   ether.parseIp(ipDestinationAddress, "192.168.11.2");
+  ether.udpServerListenOnPort(&udpSerialPrint, nSourcePort);
 }
 
-char payload[1];
-uint16_t nSourcePort = 1234;
-uint16_t nDestinationPort = 5678;
-
-#define SEND_DATA_SIZE (1000)
 
 void speedTest()
 {
+  #define SEND_DATA_SIZE (1000)
+  char payload[1];
+
   uint16_t startTime = millis();
   for (uint16_t i = 0; i < SEND_DATA_SIZE; i++) {
     ether.packetLoop(ether.packetReceive());
     ether.sendUdp(payload, PAYLOAD_LEN, nSourcePort, ipDestinationAddress, nDestinationPort);
+
     Serial.print(i);
     Serial.print(":");
     Serial.println(millis());
@@ -72,13 +74,39 @@ void speedTest()
   float bps = (float)SEND_DATA_SIZE * 8 / ((float)elapsed / 1000);
   Serial.print(bps);
   Serial.println(" kbps");
+
+  while (1);
 }
 
+void udpSerialPrint(uint16_t dest_port, uint8_t src_ip[IP_LEN], uint16_t src_port, const char *data, uint16_t len){
+  Serial.print("dest_port: ");
+  Serial.println(dest_port);
+  Serial.print("src_port: ");
+  Serial.println(src_port);
 
-void loop() {
-	uint8 test;
 
-	Xcp_SoAdIfRxIndication(&test, 5);
-  speedTest();
-  while (1);
+  Serial.print("src_ip: ");
+  ether.printIp(src_ip);
+  Serial.println("");
+
+  Serial.print("len: ");
+  Serial.println(len);
+
+  Serial.print("data: ");
+  Serial.println(data);
+
+  Xcp_SoAdIfRxIndication((uint8*)data, len);
+}
+
+Std_ReturnType SoAdIf_Transmit(uint8* data, uint16 len)
+{
+    ether.sendUdp((const char *)data, len, nSourcePort, ipDestinationAddress, nDestinationPort);
+
+    return E_OK;
+}
+
+void loop()
+{
+    ether.packetLoop(ether.packetReceive());
+//  speedTest();
 }
