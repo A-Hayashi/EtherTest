@@ -29,6 +29,7 @@ void Xcp_RxIndication(uint8* data, uint16 len)
     FIFO_GET_WRITE(Xcp_FifoRx, it) {
         memcpy(it->data, data, len);
         it->len = len;
+
     }
 }
 
@@ -84,7 +85,8 @@ void Xcp_Recieve_Main()
         uint8 pid = GET_UINT8(it->data,0);
 
         /* process standard commands */
-        Xcp_CmdListType* cmd = Xcp_CmdList+pid;
+//        Xcp_CmdListType* cmd = Xcp_CmdList+pid;
+        Xcp_CmdListType* cmd = Xcp_CmdList;
         if(cmd->fun) {
 
             if(cmd->len && it->len < cmd->len) {

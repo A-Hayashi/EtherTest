@@ -93,7 +93,12 @@ void udpSerialPrint(uint16_t dest_port, uint8_t src_ip[IP_LEN], uint16_t src_por
   Serial.println(len);
 
   Serial.print("data: ");
-  Serial.println(data);
+
+  for(uint8 i=0; i<len; i++){
+	  Serial.print(data[i], HEX);
+	  Serial.print(" ");
+  }
+  Serial.println("");
 
   Xcp_SoAdIfRxIndication((uint8*)data, len);
 }
@@ -108,5 +113,6 @@ Std_ReturnType SoAdIf_Transmit(uint8* data, uint16 len)
 void loop()
 {
     ether.packetLoop(ether.packetReceive());
+    Xcp_MainFunction();
 //  speedTest();
 }

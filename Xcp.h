@@ -28,6 +28,7 @@
 
 void Xcp_SoAdIfRxIndication(uint8 *data, uint16 len);
 Std_ReturnType SoAdIf_Transmit(uint8* data, uint16 len);
+void Xcp_MainFunction(void);
 
 
 #endif /* XCP_H_ */
